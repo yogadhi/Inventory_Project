@@ -106,7 +106,7 @@ CREATE TABLE `produk_konversi` (
   KEY `satuan_id` (`satuan_id`),
   CONSTRAINT `produk_konversi_ibfk_1` FOREIGN KEY (`produk_id`) REFERENCES `produk` (`produk_id`),
   CONSTRAINT `produk_konversi_ibfk_2` FOREIGN KEY (`satuan_id`) REFERENCES `satuan` (`satuan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2356 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=784 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -305,6 +305,8 @@ CREATE TABLE `stok_mutasi` (
   `qty` int NOT NULL,
   `saldo` int NOT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_by` varchar(50) NOT NULL,
   PRIMARY KEY (`mutasi_id`),
   KEY `idx_produk_tanggal` (`produk_id`,`tanggal`),
   CONSTRAINT `FK_Mutasi_Produk` FOREIGN KEY (`produk_id`) REFERENCES `produk` (`produk_id`)
@@ -510,7 +512,7 @@ CREATE TABLE `sys_user_role` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping routines for database 'inventory'
+-- Dumping routines for database 'inventory_db'
 --
 /*!50003 DROP PROCEDURE IF EXISTS `sp_eksekusi_stok_opname` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -573,26 +575,54 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_kartu_stok`(
     IN p_tanggal_selesai DATETIME
 )
 BEGIN
-    SELECT 
-        m.tanggal, 
-        m.jenis, 
-        m.ref_id,
-        -- Menampilkan Qty Masuk (Hanya jika jenis MASUK atau OPNAME positif)
-        CASE 
-            WHEN m.qty > 0 THEN m.qty 
-            ELSE 0 
-        END AS qty_masuk,
-        -- Menampilkan Qty Keluar (Hanya jika jenis KELUAR atau OPNAME negatif)
-        CASE 
-            WHEN m.qty < 0 THEN ABS(m.qty) 
-            ELSE 0 
-        END AS qty_keluar,
-        m.saldo, 
-        m.keterangan
-    FROM stok_mutasi m
-    WHERE m.produk_id = p_produk_id 
-      AND m.tanggal BETWEEN p_tanggal_mulai AND p_tanggal_selesai
-    ORDER BY m.tanggal ASC;-- , m.create_date ASC; -- create_date sebagai second order jika tanggal sama
+    DECLARE v_saldo_awal INT DEFAULT 0;
+
+    -- 1. Hitung Saldo Awal sebelum rentang pencarian
+    SELECT IFNULL(SUM(qty), 0) INTO v_saldo_awal
+    FROM stok_mutasi
+    WHERE produk_id = p_produk_id AND tanggal < p_tanggal_mulai;
+
+    -- 2. Tampilkan Kartu Stok dengan baris Saldo Awal + Running Total
+    SELECT * FROM (
+        -- BARIS SALDO AWAL
+        SELECT 
+            p_tanggal_mulai AS tanggal, 
+            NULL AS create_date,
+            'AWAL' AS jenis, 
+            '-' AS ref_id,
+            0 AS qty_masuk,
+            0 AS qty_keluar,
+            v_saldo_awal AS saldo, 
+            'Saldo Awal Periode' AS keterangan,
+            '-' AS create_by,
+            0 AS sort_priority -- Prioritas 0 agar selalu di paling atas
+            
+        UNION ALL
+        
+        -- BARIS TRANSAKSI MUTASI
+        SELECT 
+            t.tanggal, 
+            t.create_date, 
+            t.jenis, 
+            t.ref_id,
+            t.qty_masuk,
+            t.qty_keluar,
+            (v_saldo_awal + SUM(t.raw_qty) OVER (ORDER BY t.tanggal ASC, t.create_date ASC, t.raw_qty DESC)) AS saldo,
+            t.keterangan,
+            t.create_by,
+            1 AS sort_priority -- Prioritas 1 untuk transaksi
+        FROM (
+            SELECT 
+                tanggal, create_date, jenis, ref_id, qty AS raw_qty,
+                CASE WHEN qty > 0 THEN qty ELSE 0 END AS qty_masuk,
+                CASE WHEN qty < 0 THEN ABS(qty) ELSE 0 END AS qty_keluar,
+                keterangan, create_by
+            FROM stok_mutasi
+            WHERE produk_id = p_produk_id 
+              AND tanggal BETWEEN p_tanggal_mulai AND p_tanggal_selesai
+        ) t
+    ) final_result
+    ORDER BY sort_priority ASC, tanggal ASC, create_date ASC;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1028,6 +1058,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_transaksi_stok_keluar_fifo`(
     IN p_produk_id CHAR(36),
     IN p_qty_jual INT,
     IN p_harga_jual DECIMAL(18,2),
+    IN p_tanggal_transaksi DATETIME, 
     IN p_user_login VARCHAR(50),
     IN p_version_produk INT
 )
@@ -1045,10 +1076,10 @@ BEGIN
     -- A. AMBIL DATA PELANGGAN
     SELECT pelanggan_id INTO v_pelanggan_id FROM stok_keluar_header WHERE keluar_id = p_keluar_id;
 
-    -- 1. VALIDASI STOK & VERSION PRODUK
+    -- 1. VALIDASI STOK & VERSION PRODUK (LOCK MASTER)
     SELECT IFNULL(stok_total, 0) INTO v_saldo_lama 
     FROM produk 
-    WHERE produk_id = p_produk_id AND version = p_version_produk;
+    WHERE produk_id = p_produk_id AND version = p_version_produk FOR UPDATE;
 
     IF v_saldo_lama IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Produk tidak ditemukan atau version mismatch.';
@@ -1056,7 +1087,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stok tidak mencukupi.';
     END IF;
 
-    -- 2. PROSES FIFO (Looping)
+    -- 2. PROSES FIFO (Looping per Batch)
     WHILE v_qty_needed > 0 DO
         SELECT d.detail_masuk_id, d.sisa_stok_batch 
         INTO v_batch_id, v_batch_qty
@@ -1064,10 +1095,10 @@ BEGIN
         JOIN stok_masuk_header h ON d.masuk_id = h.masuk_id
         WHERE d.produk_id = p_produk_id AND d.sisa_stok_batch > 0
         ORDER BY h.tanggal_masuk ASC, d.detail_masuk_id ASC
-        LIMIT 1;
+        LIMIT 1 FOR UPDATE;
 
         IF v_batch_id IS NULL THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Data batch tidak sinkron.';
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Inkonsistensi data: Stok master ada, tapi sisa batch detail kosong.';
         END IF;
 
         IF v_batch_qty >= v_qty_needed THEN
@@ -1078,8 +1109,10 @@ BEGIN
             SET v_qty_needed = v_qty_needed - v_take;
         END IF;
 
+        -- Kurangi sisa di batch masuk
         UPDATE stok_masuk_detail SET sisa_stok_batch = sisa_stok_batch - v_take WHERE detail_masuk_id = v_batch_id;
 
+        -- Simpan ke detail keluar
         INSERT INTO stok_keluar_detail (
             detail_keluar_id, keluar_id, produk_id, detail_masuk_id, jumlah_jual, harga_jual_satuan
         ) VALUES (
@@ -1088,29 +1121,48 @@ BEGIN
         );
     END WHILE;
 
-    -- 3. UPDATE MASTER PRODUK (OPTIMISTIC CONCURRENCY)
+    -- 3. UPDATE MASTER PRODUK
     UPDATE produk 
-    SET stok_total = stok_total - p_qty_jual, version = version + 1
+    SET stok_total = stok_total - p_qty_jual, 
+        version = version + 1,
+        update_date = NOW(),
+        update_by = p_user_login
     WHERE produk_id = p_produk_id AND version = p_version_produk;
 
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Update produk gagal (Data telah berubah).';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Optimistic concurrency error: Data produk sudah berubah.';
     END IF;
 
-    -- 4. UPDATE PIUTANG PELANGGAN & VALIDASI LIMIT KREDIT
+    -- 4. UPDATE PIUTANG PELANGGAN
     UPDATE pelanggan 
     SET sisa_piutang = sisa_piutang + v_subtotal,
         version = version + 1
     WHERE pelanggan_id = v_pelanggan_id;
-      -- AND (sisa_piutang + v_subtotal) <= limit_kredit;
 
-    IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Gagal update pelanggan: Limit kredit terlampaui atau version mismatch.';
-    END IF;
-
-    -- 5. CATAT MUTASI
-    INSERT INTO stok_mutasi (mutasi_id, tanggal, produk_id, jenis, ref_id, qty, saldo, keterangan)
-    VALUES (UUID(), NOW(), p_produk_id, 'KELUAR', p_keluar_id, -p_qty_jual, (v_saldo_lama - p_qty_jual), 'Penjualan');
+    -- 5. CATAT MUTASI (Gunakan nama kolom: tanggal_transaksi)
+    INSERT INTO stok_mutasi (
+        mutasi_id, 
+        tanggal, -- Sesuai script ALTER kita
+        produk_id, 
+        jenis, 
+        ref_id, 
+        qty, 
+        saldo, 
+        keterangan,
+        create_date,
+        create_by
+    ) VALUES (
+        UUID(), 
+        IFNULL(p_tanggal_transaksi, NOW()), 
+        p_produk_id, 
+        'KELUAR', 
+        p_keluar_id, 
+        -p_qty_jual, 
+        (v_saldo_lama - p_qty_jual), 
+        CONCAT('Penjualan - No Nota: ', p_keluar_id),
+        NOW(),
+        p_user_login
+    );
 
 END ;;
 DELIMITER ;
@@ -1134,25 +1186,25 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_transaksi_stok_masuk`(
     IN p_jumlah_masuk INT,
     IN p_satuan VARCHAR(50),
     IN p_harga_beli DECIMAL(18,2),
+    IN p_tanggal_transaksi DATETIME,
     IN p_create_by VARCHAR(50)
 )
 BEGIN
     DECLARE v_saldo_lama INT;
     DECLARE v_new_detail_id CHAR(36);
 
-    -- 1. Ambil saldo stok terbaru dan LOCK baris ini (FOR UPDATE)
-    -- Ini penting agar jika ada transaksi keluar/masuk lain di detik yang sama, mereka harus antre
+    -- 1. LOCK baris produk
     SELECT IFNULL(stok_total, 0) INTO v_saldo_lama 
     FROM produk 
     WHERE produk_id = p_produk_id FOR UPDATE;
 
     IF v_saldo_lama IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Produk tidak ditemukan dalam master data.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Produk tidak ditemukan.';
     END IF;
 
     SET v_new_detail_id = UUID();
 
-    -- 2. Insert ke stok_masuk_detail (Batch FIFO)
+    -- 2. Insert detail masuk
     INSERT INTO stok_masuk_detail (
         detail_masuk_id, masuk_id, produk_id, jumlah_masuk, 
         satuan_digunakan, harga_beli_satuan, sisa_stok_batch
@@ -1161,25 +1213,38 @@ BEGIN
         p_satuan, p_harga_beli, p_jumlah_masuk
     );
 
-    -- 3. Update stok_total dan NAIKKAN VERSION
-    -- Update version penting agar sinkron dengan logika transaksi keluar kamu
+    -- 3. Update master stok
     UPDATE produk 
-    SET stok_total = IFNULL(stok_total, 0) + p_jumlah_masuk,
-        version = IFNULL(version, 0) + 1,
+    SET stok_total = v_saldo_lama + p_jumlah_masuk,
+        version = version + 1,
         update_date = NOW(),
         update_by = p_create_by
     WHERE produk_id = p_produk_id;
 
-    -- 4. Catat riwayat ke stok_mutasi dengan Saldo Akhir yang Akurat
+    -- 4. Insert mutasi (Gunakan nama kolom hasil ALTER: tanggal_transaksi)
     INSERT INTO stok_mutasi (
-        mutasi_id, tanggal, produk_id, jenis, ref_id, 
-        qty, saldo, keterangan
+        mutasi_id, 
+        tanggal, -- Sesuai script ALTER kita
+        produk_id, 
+        jenis, 
+        ref_id, 
+        qty, 
+        saldo,             -- Ini adalah saldo snapshot setelah transaksi ini
+        keterangan,
+        create_date,
+        create_by
     ) VALUES (
-        UUID(), NOW(), p_produk_id, 'MASUK', p_masuk_id, 
-        p_jumlah_masuk, (v_saldo_lama + p_jumlah_masuk), 
-        CONCAT('Penerimaan Barang - No: ', p_masuk_id)
+        UUID(), 
+        IFNULL(p_tanggal_transaksi, NOW()), 
+        p_produk_id, 
+        'MASUK', 
+        p_masuk_id, 
+        p_jumlah_masuk, 
+        (v_saldo_lama + p_jumlah_masuk), 
+        CONCAT('Penerimaan Barang - Ref: ', p_masuk_id),
+        NOW(),
+        p_create_by
     );
-
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1196,4 +1261,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-25 14:02:57
+-- Dump completed on 2026-04-26 22:51:40
