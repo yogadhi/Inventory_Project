@@ -11,7 +11,17 @@ services:
       - "${DB_PORT_EXTERNAL}:3306"
     volumes:
       - ./mysql_data:/var/lib/mysql
-      - ./init-db:/docker-entrypoint-initdb.d
+      - ./init-db:/docker-entrypoint-initdb.d # Tetap ada untuk inisialisasi awal
+
+  inventory-flyway:
+    image: flyway/flyway:latest
+    container_name: inventory-flyway
+    # Menghubungkan Flyway ke database dengan retries jika DB belum siap
+    command: -url=jdbc:mysql://inventory-db:3306/${DB_NAME} -user=root -password=${DB_ROOT_PASSWORD} -connectRetries=60 migrate
+    volumes:
+      - ./init-db:/flyway/sql
+    depends_on:
+      - inventory-db
 
   inventory-api:
     build: ./Inventory_API
@@ -24,7 +34,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:${API_PORT}
-      - ConnectionStrings__DefaultConnection=Server=inventory-db;Database=${DB_NAME};Uid=${DB_USER};Pwd=${DB_ROOT_PASSWORD};AllowUserVariables=True
+      # AllowUserVariables=True penting untuk Stored Procedure dengan Window Functions
+      - ConnectionStrings__DefaultConnection=Server=inventory-db;Database=${DB_NAME};Uid=root;Pwd=${DB_ROOT_PASSWORD};AllowUserVariables=True
 
   inventory-web:
     build: ./inventory_app
