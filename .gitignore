@@ -1,0 +1,4 @@
+.env
+mysql_data
+push_force.sh
+sync_server.sh
