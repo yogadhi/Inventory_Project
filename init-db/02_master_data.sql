@@ -20,7 +20,7 @@
 --
 
 /*!40000 ALTER TABLE `kategori` DISABLE KEYS */;
-INSERT INTO `kategori` VALUES (1,'HVS / Woodfree','HVS',1),(2,'Art Paper','AP',1),(3,'Art Carton','AC',1),(4,'Ivory / Food Grade','IV',1),(5,'Brief Card / Manila','BC',1),(6,'Buffalo / Linen','BFL',1),(7,'Duplex / Coated Board','DP',1),(8,'Sticker Bontax / Vinyl','STK',1),(9,'Kalkir / Tracing Paper','KLK',1),(10,'NCR (Carbonless)','NCR',1),(11,'Samson / Kraft','KFT',1),(12,'Corrugated Board','CRG',1);
+INSERT INTO `kategori` VALUES (1,'HVS','HVS',1),(2,'Art Paper','AP',1),(3,'Art Carton','AC',1),(4,'Ivory','IV',1),(5,'Brief Card','BC',1),(6,'Buffalo','BFL',1),(7,'Duplex','DP',1),(8,'Vinyl','VIN',1),(9,'Kalkir','KLK',1),(10,'NCR (Carbonless)','NCR',1),(11,'Kraft','KFT',1),(12,'Corrugated Board','CRG',1);
 /*!40000 ALTER TABLE `kategori` ENABLE KEYS */;
 
 --
@@ -28,7 +28,7 @@ INSERT INTO `kategori` VALUES (1,'HVS / Woodfree','HVS',1),(2,'Art Paper','AP',1
 --
 
 /*!40000 ALTER TABLE `satuan` DISABLE KEYS */;
-INSERT INTO `satuan` VALUES (1,'Lembar','LBR',1,1,'2026-04-16 22:24:33',NULL),(2,'Pack','PCK',2,1,'2026-04-16 22:24:33',NULL),(3,'Rim','RIM',3,1,'2026-04-16 22:24:33',NULL),(4,'Box','BOX',4,1,'2026-04-16 22:24:33',NULL);
+INSERT INTO `satuan` VALUES (1,'Lembar','LBR',1,1,'2026-04-16 22:24:33',NULL),(2,'Pack','PCK',2,0,'2026-04-16 22:24:33',NULL),(3,'Rim','RIM',3,1,'2026-04-16 22:24:33',NULL),(4,'Box','BOX',4,0,'2026-04-16 22:24:33',NULL);
 /*!40000 ALTER TABLE `satuan` ENABLE KEYS */;
 
 --

@@ -15,9 +15,77 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+DELIMITER ;;
+SELECT CONCAT('DROP PROCEDURE IF EXISTS `', routine_name, '`;')
+FROM information_schema.routines
+WHERE routine_schema = 'inventory_db' 
+  AND routine_type = 'PROCEDURE';
+DELIMITER ;;
+
 --
 -- Dumping routines for database 'inventory_db'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `sp_adjust_piutang_pelanggan` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_adjust_piutang_pelanggan`(
+    IN p_pelanggan_id CHAR(36) -- Kirim NULL jika ingin adjust SEMUA pelanggan
+)
+BEGIN
+	SET SQL_SAFE_UPDATES = 0;
+    -- 1. Gunakan Temporary Table untuk menghitung saldo terbaru
+    CREATE TEMPORARY TABLE IF NOT EXISTS tmp_piutang_baru AS
+    SELECT 
+        p.pelanggan_id,
+        -- Total Piutang dari Nota (Omzet - Uang Muka)
+        IFNULL((
+            SELECT SUM(h.total_omzet - h.uang_muka) 
+            FROM stok_keluar_header h 
+            WHERE h.pelanggan_id = p.pelanggan_id
+        ), 0) AS total_tagihan,
+        -- Total yang sudah dibayar di tabel pembayaran
+        IFNULL((
+            SELECT SUM(bayar.jumlah_bayar) 
+            FROM stok_keluar_pembayaran bayar
+            JOIN stok_keluar_header h ON bayar.keluar_id = h.keluar_id
+            WHERE h.pelanggan_id = p.pelanggan_id
+        ), 0) AS total_terbayar
+    FROM pelanggan p
+    WHERE (p_pelanggan_id IS NULL OR p.pelanggan_id = p_pelanggan_id);
+
+    -- 2. Update Master Pelanggan
+    UPDATE pelanggan p
+    JOIN tmp_piutang_baru t ON p.pelanggan_id = t.pelanggan_id
+    SET p.sisa_piutang = (t.total_tagihan - t.total_terbayar),
+        p.version = p.version + 1,
+        p.update_date = NOW(),
+        p.update_by = 'SYSTEM_ADJUST';
+
+    -- 3. Sinkronisasi Sisa Piutang di level Header (Nota)
+    -- Agar sisa piutang di tiap nota juga akurat
+    UPDATE stok_keluar_header h
+    SET h.sisa_piutang = (h.total_omzet - h.uang_muka - 
+        IFNULL((SELECT SUM(jumlah_bayar) FROM stok_keluar_pembayaran WHERE keluar_id = h.keluar_id), 0)
+    ),
+    h.status_bayar = IF((h.total_omzet - h.uang_muka - IFNULL((SELECT SUM(jumlah_bayar) FROM stok_keluar_pembayaran WHERE keluar_id = h.keluar_id), 0)) <= 0, 'Lunas', 'Belum Lunas'),
+    h.version = h.version + 1
+    WHERE (p_pelanggan_id IS NULL OR h.pelanggan_id = p_pelanggan_id);
+
+    DROP TEMPORARY TABLE tmp_piutang_baru;
+    SET SQL_SAFE_UPDATES = 1;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_eksekusi_stok_opname` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -27,7 +95,6 @@
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_eksekusi_stok_opname`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_eksekusi_stok_opname`(
     IN p_produk_id CHAR(36),
@@ -64,6 +131,54 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_get_dashboard` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_dashboard`(
+    IN p_tanggal_mulai DATETIME,
+    IN p_tanggal_selesai DATETIME
+)
+BEGIN
+    SELECT 
+        t.total_omzet_akrual AS total_omzet,
+        t.total_hpp AS total_hpp,
+        t.laba_kotor_akrual AS laba_kotor,
+        -- Menghitung total nota masuk unik
+        (SELECT COUNT(DISTINCT masuk_id) FROM stok_masuk_header 
+         WHERE tanggal_masuk BETWEEN p_tanggal_mulai AND p_tanggal_selesai) AS total_transaksi_masuk,
+        -- Menghitung total nota keluar unik
+        (SELECT COUNT(DISTINCT keluar_id) FROM stok_keluar_header 
+         WHERE tanggal_keluar BETWEEN p_tanggal_mulai AND p_tanggal_selesai) AS total_transaksi_keluar,
+        -- Menghitung Profit Margin (%)
+        IF(t.total_omzet_akrual > 0, (t.laba_kotor_akrual / t.total_omzet_akrual) * 100, 0) AS profit_margin
+    FROM (
+        SELECT 
+            SUM(skd.jumlah_jual * skd.harga_jual_satuan + 
+                IFNULL((SELECT SUM(amount) FROM stok_keluar_detail_tambahan WHERE detail_keluar_id = skd.detail_keluar_id), 0)
+            ) AS total_omzet_akrual,
+            SUM(skd.jumlah_jual * smd.harga_beli_satuan) AS total_hpp,
+            SUM((skd.jumlah_jual * skd.harga_jual_satuan + 
+                IFNULL((SELECT SUM(amount) FROM stok_keluar_detail_tambahan WHERE detail_keluar_id = skd.detail_keluar_id), 0)) 
+                - (skd.jumlah_jual * smd.harga_beli_satuan)
+            ) AS laba_kotor_akrual
+        FROM stok_keluar_header skh
+        INNER JOIN stok_keluar_detail skd ON skh.keluar_id = skd.keluar_id
+        INNER JOIN stok_masuk_detail smd ON skd.detail_masuk_id = smd.detail_masuk_id
+        WHERE skh.tanggal_keluar BETWEEN p_tanggal_mulai AND p_tanggal_selesai
+    ) t;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_get_kartu_stok` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -73,7 +188,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_get_kartu_stok`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_kartu_stok`(
     IN p_produk_id CHAR(36),
@@ -151,6 +265,67 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_get_laba_rugi_lengkap` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_laba_rugi_lengkap`(
+    IN p_tanggal_mulai DATETIME,
+    IN p_tanggal_selesai DATETIME
+)
+BEGIN
+    SELECT 
+        -- 1. TOTAL OMZET AKRUAL (Semua nota keluar, baik tunai maupun tempo)
+        SUM(t.subtotal_jual + t.total_tambahan) AS total_omzet_akrual,
+        
+        -- 2. TOTAL HPP (Modal barang yang sudah keluar dari gudang)
+        SUM(t.total_hpp) AS total_hpp,
+        
+        -- 3. TOTAL PIUTANG (Bagian dari omzet yang belum dibayar oleh pelanggan)
+        SUM(t.sisa_piutang_nota) AS total_piutang_berjalan,
+        
+        -- 4. TOTAL KAS MASUK (Uang yang benar-benar sudah diterima: Omzet - Piutang)
+        SUM((t.subtotal_jual + t.total_tambahan) - t.sisa_piutang_nota) AS total_kas_masuk,
+        
+        -- 5. LABA KOTOR (Berdasarkan Omzet Akrual - HPP)
+        SUM((t.subtotal_jual + t.total_tambahan) - t.total_hpp) AS laba_kotor_akrual
+        
+    FROM (
+        SELECT 
+            skh.keluar_id,
+            -- Ambil sisa piutang dari header nota
+            skh.sisa_piutang AS sisa_piutang_nota,
+            
+            -- Hitung omzet per baris barang
+            (skd.jumlah_jual * skd.harga_jual_satuan) AS subtotal_jual,
+            
+            -- Tarik HPP dari batch masuk via FIFO
+            (skd.jumlah_jual * smd.harga_beli_satuan) AS total_hpp,
+            
+            -- Hitung biaya tambahan (potong, dll)
+            IFNULL((
+                SELECT SUM(amount) 
+                FROM stok_keluar_detail_tambahan 
+                WHERE detail_keluar_id = skd.detail_keluar_id
+            ), 0) AS total_tambahan
+            
+        FROM stok_keluar_header skh
+        INNER JOIN stok_keluar_detail skd ON skh.keluar_id = skd.keluar_id
+        INNER JOIN stok_masuk_detail smd ON skd.detail_masuk_id = smd.detail_masuk_id
+        WHERE skh.tanggal_keluar BETWEEN p_tanggal_mulai AND p_tanggal_selesai
+    ) t;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_get_produk_price_list` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -160,7 +335,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_get_produk_price_list`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_produk_price_list`(
     IN p_untung_rim_percent DECIMAL(5,2),
@@ -220,7 +394,7 @@ BEGIN
     FROM produk p 
     INNER JOIN kategori k ON k.kategori_id = p.kategori_id AND k.is_active = 1
     WHERE p.is_active = 1
-    ORDER BY p.merk ASC;
+    ORDER BY k.nama_kategori ASC;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -236,7 +410,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_get_produk_terlaris`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_produk_terlaris`(
     IN p_tanggal_mulai DATETIME,
@@ -271,7 +444,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_get_produk_with_saldo`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_produk_with_saldo`()
 BEGIN
@@ -305,7 +477,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_get_transaksi_keluar_detail_by_id`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_transaksi_keluar_detail_by_id`(
     IN p_keluar_id CHAR(36)
@@ -313,6 +484,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_transaksi_keluar_detail_by_i
 BEGIN
     SELECT 
         d.detail_keluar_id,
+        prd.produk_id,
         prd.nama_barang,
         d.jumlah_jual,
         d.harga_jual_satuan,
@@ -351,7 +523,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_get_transaksi_keluar_header_list`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_transaksi_keluar_header_list`(
     IN p_tanggal_mulai DATETIME,
@@ -366,6 +537,7 @@ BEGIN
         p.nama_pelanggan,
         h.status_bayar,
         h.total_omzet,
+        h.sisa_piutang AS sisa_tagihan,
         -- Menghitung ada berapa baris barang di nota ini
         (SELECT COUNT(*) 
          FROM stok_keluar_detail d 
@@ -382,6 +554,72 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_get_transaksi_keluar_lengkap` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_transaksi_keluar_lengkap`(
+    IN p_keluar_id CHAR(36)
+)
+BEGIN
+    -- 1. RESULT SET: DATA HEADER & PELANGGAN
+    SELECT 
+        h.*, 
+        p.nama_pelanggan, 
+        p.no_telp AS telp_pelanggan, 
+        p.alamat AS alamat_pelanggan
+    FROM stok_keluar_header h
+    LEFT JOIN pelanggan p ON h.pelanggan_id = p.pelanggan_id
+    WHERE h.keluar_id = p_keluar_id;
+
+    -- 2. RESULT SET: DATA DETAIL BARANG (Inlcuding Produk Info)
+    SELECT 
+        d.*, 
+        pr.kode_barang, 
+        pr.nama_barang, 
+        pr.merk, 
+        pr.gramasi,
+        k.nama_kategori
+    FROM stok_keluar_detail d
+    JOIN produk pr ON d.produk_id = pr.produk_id
+    LEFT JOIN kategori k ON pr.kategori_id = k.kategori_id
+    WHERE d.keluar_id = p_keluar_id;
+
+    -- 3. RESULT SET: BIAYA TAMBAHAN (Potong, dll)
+    SELECT 
+        t.*,
+        d.produk_id -- Untuk mapping di Flutter/C# jika diperlukan
+    FROM stok_keluar_detail_tambahan t
+    JOIN stok_keluar_detail d ON t.detail_keluar_id = d.detail_keluar_id
+    WHERE d.keluar_id = p_keluar_id;
+
+    -- 4. RESULT SET: RIWAYAT PEMBAYARAN
+    SELECT * FROM stok_keluar_pembayaran 
+    WHERE keluar_id = p_keluar_id
+    ORDER BY tanggal_bayar ASC;
+
+    -- 5. RESULT SET: KONVERSI SATUAN (Untuk keperluan UI Label Satuan)
+    SELECT 
+        pk.*, 
+        s.nama_satuan, 
+        s.kode_satuan
+    FROM produk_konversi pk
+    JOIN satuan s ON pk.satuan_id = s.satuan_id
+    WHERE pk.produk_id IN (SELECT produk_id FROM stok_keluar_detail WHERE keluar_id = p_keluar_id)
+    AND s.is_active = 1;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_get_transaksi_keluar_list` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -391,7 +629,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_get_transaksi_keluar_list`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_transaksi_keluar_list`(
     IN p_tanggal_mulai DATETIME,
@@ -435,7 +672,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_pembayaran_piutang`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pembayaran_piutang`(
     IN p_keluar_id CHAR(36),      -- ID Transaksi Penjualan
@@ -448,7 +684,7 @@ BEGIN
     DECLARE v_pelanggan_id CHAR(36);
     DECLARE v_sisa_tagihan_header DECIMAL(18,2);
 
-    -- 1. Ambil data pelanggan dan cek sisa hutang di nota ini
+    -- 1. Ambil data pelanggan dan cek sisa piutang di nota ini
     SELECT pelanggan_id, sisa_piutang 
     INTO v_pelanggan_id, v_sisa_tagihan_header
     FROM stok_keluar_header 
@@ -463,7 +699,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Jumlah bayar melebihi sisa piutang nota ini.';
     END IF;
 
-    -- 3. Catat Riwayat Pembayaran (Ke tabel yang kamu buat tadi)
+    -- 3. Catat Riwayat Pembayaran
     INSERT INTO stok_keluar_pembayaran (
         pembayaran_id, 
         keluar_id, 
@@ -471,7 +707,8 @@ BEGIN
         jumlah_bayar, 
         metode_bayar, 
         keterangan, 
-        create_by
+        create_by,
+        create_date
     ) VALUES (
         UUID(), 
         p_keluar_id, 
@@ -479,18 +716,25 @@ BEGIN
         p_jumlah_bayar, 
         p_metode_bayar, 
         p_keterangan, 
-        p_user_login
+        p_user_login,
+        NOW()
     );
 
-    -- 4. Potong Piutang di Nota Penjualan
+    -- 4. Potong Piutang di Nota & Update Status ke 'Lunas' jika sisa <= 0
     UPDATE stok_keluar_header 
-    SET sisa_piutang = sisa_piutang - p_jumlah_bayar
+    SET sisa_piutang = sisa_piutang - p_jumlah_bayar,
+        status_bayar = IF((sisa_piutang - p_jumlah_bayar) <= 0, 'Lunas', status_bayar),
+        version = version + 1,
+        update_date = NOW(),
+        update_by = p_user_login
     WHERE keluar_id = p_keluar_id;
 
     -- 5. Potong Total Piutang di Master Pelanggan & Naikkan Version
     UPDATE pelanggan 
     SET sisa_piutang = sisa_piutang - p_jumlah_bayar,
-        version = version + 1
+        version = version + 1,
+        update_date = NOW(),
+        update_by = p_user_login
     WHERE pelanggan_id = v_pelanggan_id;
 
 END ;;
@@ -508,7 +752,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_report_sisa_hutang_supplier`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_report_sisa_hutang_supplier`()
 BEGIN
@@ -546,7 +789,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_report_sisa_piutang_pelanggan`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_report_sisa_piutang_pelanggan`()
 BEGIN
@@ -584,7 +826,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_transaksi_stok_keluar_fifo`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_transaksi_stok_keluar_fifo`(
     IN p_detail_keluar_id CHAR(36),
@@ -713,7 +954,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DROP PROCEDURE IF EXISTS `sp_transaksi_stok_masuk`;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_transaksi_stok_masuk`(
     IN p_masuk_id CHAR(36),
@@ -796,4 +1036,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-04 20:29:15
+-- Dump completed
