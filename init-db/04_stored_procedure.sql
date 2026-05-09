@@ -15,13 +15,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-DELIMITER ;;
-SELECT CONCAT('DROP PROCEDURE IF EXISTS `', routine_name, '`;')
-FROM information_schema.routines
-WHERE routine_schema = 'inventory_db' 
-  AND routine_type = 'PROCEDURE';
-DELIMITER ;;
-
 --
 -- Dumping routines for database 'inventory_db'
 --
