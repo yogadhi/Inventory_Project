@@ -5,48 +5,64 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
 
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="/">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="FSCounterMaster - Inventory Management System">
 
-  <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="inventory_app">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png" />
 
-  <title>inventory_app</title>
+  <title>FSCounterMaster</title>
   <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js?v=20260509.0912" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
+  <script>
+    // 1. Matikan dan Hapus Service Worker yang sudah terlanjur terpasang
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        for (let registration of registrations) {
+          registration.unregister();
+          console.log('SW Unregistered untuk mencegah nyantol');
+        }
+      });
+    }
 
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
-  <script src="flutter_bootstrap.js?v=20260509.0912" async></script>
+    // 2. Bersihkan Cache Storage browser agar file lama dibuang
+    if (window.caches) {
+      caches.keys().then(function (names) {
+        for (let name of names) {
+          caches.delete(name);
+          console.log('Cache Storage Cleared:', name);
+        }
+      });
+    }
+
+    // 3. Konfigurasi Flutter Loader
+    window.addEventListener('load', function (ev) {
+      // Download flutter_bootstrap.js?v=20260509.0950 secara manual untuk kontrol penuh
+      _flutter.loader.load({
+        serviceWorkerSettings: {
+          // Paksa null agar Flutter tidak mencoba mencari flutter_service_worker.js
+          serviceWorkerVersion: null,
+        },
+        onEntrypointLoaded: function (engineInitializer) {
+          engineInitializer.initializeEngine().then(function (appRunner) {
+            appRunner.runApp();
+          });
+        }
+      });
+    });
+  </script>
+
+  <script src="flutter_bootstrap.js?v=20260509.0950" async></script>
 </body>
 
 </html>
