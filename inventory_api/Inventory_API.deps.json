@@ -649,6 +649,7 @@
       "Core.Framework/1.0.0": {
         "dependencies": {
           "BCrypt.Net-Next": "4.1.0",
+          "MySqlConnector": "2.5.0",
           "Serilog": "4.3.1",
           "System.IdentityModel.Tokens.Jwt": "8.18.0"
         },
