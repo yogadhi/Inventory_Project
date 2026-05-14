@@ -2,16 +2,15 @@ services:
   inventory-db:
     image: mysql:8.0
     container_name: inventory-mysql
-    environment:
-      - TZ=Asia/Jakarta  # Menetapkan timezone environment
     volumes:
       - /etc/localtime:/etc/localtime:ro # Sinkronisasi file waktu host
       - /etc/timezone:/etc/timezone:ro   # Sinkronisasi konfigurasi timezone
     restart: always
     command: --lower_case_table_names=1
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
-      MYSQL_DATABASE: "${DB_NAME}"
+      - MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      - MYSQL_DATABASE: "${DB_NAME}"
+      - TZ=Asia/Jakarta  # Menetapkan timezone environment
     ports:
       - "${DB_PORT_EXTERNAL}:3306"
     volumes:
