@@ -5,16 +5,16 @@ services:
     restart: always
     command: --lower_case_table_names=1
     environment:
-      - MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
-      - MYSQL_DATABASE: "${DB_NAME}"
-      - TZ=Asia/Jakarta  # Menetapkan timezone environment
+      - TZ=Asia/Jakarta
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
     ports:
       - "${DB_PORT_EXTERNAL}:3306"
     volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
       - ./mysql_data:/var/lib/mysql
-      - ./init-db:/docker-entrypoint-initdb.d # Tetap ada untuk inisialisasi awal
-      - /etc/localtime:/etc/localtime:ro # Sinkronisasi file waktu host
-      - /etc/timezone:/etc/timezone:ro   # Sinkronisasi konfigurasi timezone
+      - ./init-db:/docker-entrypoint-initdb.d
 
   inventory-flyway:
     image: flyway/flyway:latest
