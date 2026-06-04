@@ -29,28 +29,19 @@
       navigator.serviceWorker.getRegistrations().then(function (registrations) {
         for (let registration of registrations) {
           registration.unregister();
-          console.log('SW Unregistered');
         }
       });
     }
-
     if (window.caches) {
       caches.keys().then(function (names) {
-        for (let name of names) {
-          caches.delete(name);
-          console.log('Cache Storage Cleared:', name);
-        }
+        for (let name of names) caches.delete(name);
       });
     }
 
     window.addEventListener('load', function (ev) {
       _flutter.loader.load({
-        serviceWorkerSettings: {
-          serviceWorkerVersion: null,
-        },
         onEntrypointLoaded: function (engineInitializer) {
           engineInitializer.initializeEngine({
-            webRenderer: "html",
             useColorChromium: true
           }).then(function (appRunner) {
             appRunner.runApp();
@@ -62,7 +53,7 @@
 
   <script>
     const script = document.createElement('script');
-    script.src = "flutter_bootstrap.js?v=20260603.0653?v=" + Math.floor(Math.random() * 1000000);
+    script.src = "flutter_bootstrap.js?v=20260604.2339?v=" + new Date().getTime();
     script.async = true;
     document.body.appendChild(script);
   </script>
