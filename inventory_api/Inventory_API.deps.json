@@ -21,6 +21,7 @@
           "Microsoft.IdentityModel.Tokens": "8.18.0",
           "MySqlBackup.NET": "2.7.0",
           "MySqlConnector": "2.5.0",
+          "QuestPDF": "2026.7.1",
           "Serilog.AspNetCore": "10.0.0",
           "Serilog.Sinks.File": "7.0.0",
           "Swashbuckle.AspNetCore": "6.5.0",
@@ -546,6 +547,22 @@
           "lib/net8.0/MySqlConnector.dll": {
             "assemblyVersion": "2.0.0.0",
             "fileVersion": "2.5.0.0"
+          }
+        }
+      },
+      "QuestPDF/2026.7.1": {
+        "runtime": {
+          "lib/net8.0/QuestPDF.dll": {
+            "assemblyVersion": "2026.7.1.0",
+            "fileVersion": "2026.7.1.0"
+          }
+        },
+        "native": {
+          "runtimes/linux-x64/native/libQuestPdfSkia.so": {
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/linux-x64/native/libqpdf.so": {
+            "fileVersion": "0.0.0.0"
           }
         }
       },
@@ -1180,6 +1197,13 @@
       "sha512": "sha512-hoAwfHHF8DlRRqwHOhN3u1KLi+XbX/4LPS7Anfa+SYC97vRyIfdEOEEfj1L50q01Ik8aDNvmDrNmu/VPFiAiaQ==",
       "path": "mysqlconnector/2.5.0",
       "hashPath": "mysqlconnector.2.5.0.nupkg.sha512"
+    },
+    "QuestPDF/2026.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GsBxQb48dFAGmvI1eP3SHyz0Pua4uH6aUHX7f0ywTin6hordAviZRAiTiIQiKMLwq6hN1FmgS+qLjfh2v7vhOg==",
+      "path": "questpdf/2026.7.1",
+      "hashPath": "questpdf.2026.7.1.nupkg.sha512"
     },
     "RBush.Signed/4.0.0": {
       "type": "package",
