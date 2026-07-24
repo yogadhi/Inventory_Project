@@ -19,7 +19,7 @@
           "Microsoft.IdentityModel.JsonWebTokens": "8.18.0",
           "Microsoft.IdentityModel.Logging": "8.18.0",
           "Microsoft.IdentityModel.Tokens": "8.18.0",
-          "MySqlBackup.NET": "2.7.0",
+          "MySqlBackup.NET": "2.7.1",
           "MySqlConnector": "2.5.0",
           "QuestPDF": "2026.7.1",
           "Serilog.AspNetCore": "10.0.0",
@@ -511,7 +511,7 @@
           }
         }
       },
-      "MySql.Data/9.6.0": {
+      "MySql.Data/9.7.0": {
         "dependencies": {
           "BouncyCastle.Cryptography": "2.6.2",
           "Google.Protobuf": "3.32.0",
@@ -522,19 +522,19 @@
         },
         "runtime": {
           "lib/net8.0/MySql.Data.dll": {
-            "assemblyVersion": "9.6.0.0",
-            "fileVersion": "9.6.0.0"
+            "assemblyVersion": "9.7.0.0",
+            "fileVersion": "9.7.0.0"
           }
         }
       },
-      "MySqlBackup.NET/2.7.0": {
+      "MySqlBackup.NET/2.7.1": {
         "dependencies": {
-          "MySql.Data": "9.6.0"
+          "MySql.Data": "9.7.0"
         },
         "runtime": {
           "lib/net8.0/MySqlBackup.dll": {
-            "assemblyVersion": "2.7.0.0",
-            "fileVersion": "2.7.0.0"
+            "assemblyVersion": "2.7.1.0",
+            "fileVersion": "2.7.1.0"
           }
         }
       },
@@ -1177,19 +1177,19 @@
       "path": "microsoft.sqlserver.server/1.0.0",
       "hashPath": "microsoft.sqlserver.server.1.0.0.nupkg.sha512"
     },
-    "MySql.Data/9.6.0": {
+    "MySql.Data/9.7.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-jjCXNBxLLQHBcyYyOP4yp5jqljStH2qGFXXg3jBMdwYQk9ihpLH9BXoMyc/J3421pENBDjCf/eGi9Ow0Ib7LUA==",
-      "path": "mysql.data/9.6.0",
-      "hashPath": "mysql.data.9.6.0.nupkg.sha512"
+      "sha512": "sha512-yJRZnwqOaKd7DXdbim2/gznKnt4kJEYUe/+PdbopY0WC+2UPcYGOtuSrHrBOAoKEpO66p5TGwlP4hQ233SBAKA==",
+      "path": "mysql.data/9.7.0",
+      "hashPath": "mysql.data.9.7.0.nupkg.sha512"
     },
-    "MySqlBackup.NET/2.7.0": {
+    "MySqlBackup.NET/2.7.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-L2knDgyFIiskFVtJM35UsCuMooZSXGXHfc57s4fQfKbXpRPFnF66IPHQRUSc6GFCN2tZwEKfgIQw1ifG1gH51g==",
-      "path": "mysqlbackup.net/2.7.0",
-      "hashPath": "mysqlbackup.net.2.7.0.nupkg.sha512"
+      "sha512": "sha512-BVj/Zh/8MDNvtcNppv6Le2DSKQ8ghkDhcPhMjFTnv9lWVSMezp2ed2K9p3v9NgwBzTkILeMWki9p2yf+PRpOvA==",
+      "path": "mysqlbackup.net/2.7.1",
+      "hashPath": "mysqlbackup.net.2.7.1.nupkg.sha512"
     },
     "MySqlConnector/2.5.0": {
       "type": "package",
