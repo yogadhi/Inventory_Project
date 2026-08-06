@@ -25,6 +25,8 @@
           "QuestPDF": "2026.7.1",
           "Serilog.AspNetCore": "10.0.0",
           "Serilog.Sinks.File": "7.0.0",
+          "SkiaSharp": "4.151.1",
+          "SkiaSharp.NativeAssets.Linux": "4.151.1",
           "Swashbuckle.AspNetCore": "6.5.0",
           "System.IdentityModel.Tokens.Jwt": "8.18.0",
           "System.Management": "10.0.5"
@@ -726,6 +728,21 @@
           }
         }
       },
+      "SkiaSharp/4.151.1": {
+        "runtime": {
+          "lib/net6.0/SkiaSharp.dll": {
+            "assemblyVersion": "4.151.0.0",
+            "fileVersion": "4.151.1.0"
+          }
+        }
+      },
+      "SkiaSharp.NativeAssets.Linux/4.151.1": {
+        "native": {
+          "runtimes/linux-x64/native/libSkiaSharp.so": {
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/6.5.0": {
         "dependencies": {
           "Swashbuckle.AspNetCore.Swagger": "6.5.0",
@@ -1337,6 +1354,20 @@
       "sha512": "sha512-H2rPiEr2ddBOltOuqRYhpLBAsQXDAhbzMMhhuksnBG2oefup1MXMchALe7yYkKJksNbtxbZHKeM6dn/68I75qw==",
       "path": "sixlabors.imagesharp/1.0.4",
       "hashPath": "sixlabors.imagesharp.1.0.4.nupkg.sha512"
+    },
+    "SkiaSharp/4.151.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-FNlVsGZ9to3o9pObVqhIZanHjUGOoPb/Zxk5svCSLMJnKwxPKV7sIJrjs9BpB/jF3j9OdsaMOb4cfwSJbjueSw==",
+      "path": "skiasharp/4.151.1",
+      "hashPath": "skiasharp.4.151.1.nupkg.sha512"
+    },
+    "SkiaSharp.NativeAssets.Linux/4.151.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-4FM5fSV6W3nMOeawrxkgu3sf3uWUfQEizZ+ww6kcByf9XERiSbZftf5dyJxOUFDLcrtj9aslN2Jb7uZsO/lfWw==",
+      "path": "skiasharp.nativeassets.linux/4.151.1",
+      "hashPath": "skiasharp.nativeassets.linux.4.151.1.nupkg.sha512"
     },
     "Swashbuckle.AspNetCore/6.5.0": {
       "type": "package",
