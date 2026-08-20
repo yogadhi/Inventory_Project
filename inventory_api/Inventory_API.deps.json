@@ -10,17 +10,17 @@
       "Inventory_API/1.0.0": {
         "dependencies": {
           "BCrypt.Net-Next": "4.1.0",
-          "ClosedXML": "0.105.0",
+          "ClosedXML": "0.105.1",
           "Core.Framework": "1.0.0",
           "Dapper": "2.1.72",
           "Dapper.FluentMap": "1.8.1",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.25",
           "Microsoft.AspNetCore.OpenApi": "8.0.25",
-          "Microsoft.IdentityModel.JsonWebTokens": "8.18.0",
-          "Microsoft.IdentityModel.Logging": "8.18.0",
-          "Microsoft.IdentityModel.Tokens": "8.18.0",
+          "Microsoft.IdentityModel.JsonWebTokens": "8.22.0",
+          "Microsoft.IdentityModel.Logging": "8.22.0",
+          "Microsoft.IdentityModel.Tokens": "8.22.0",
           "MySqlBackup.NET": "2.7.1",
-          "MySqlConnector": "2.5.0",
+          "MySqlConnector": "2.6.2",
           "PdfSharpCore": "1.3.67",
           "QuestPDF": "2026.7.1",
           "Serilog.AspNetCore": "10.0.0",
@@ -28,7 +28,7 @@
           "SkiaSharp": "4.151.1",
           "SkiaSharp.NativeAssets.Linux": "4.151.1",
           "Swashbuckle.AspNetCore": "6.5.0",
-          "System.IdentityModel.Tokens.Jwt": "8.18.0",
+          "System.IdentityModel.Tokens.Jwt": "8.22.0",
           "System.Management": "10.0.5"
         },
         "runtime": {
@@ -51,7 +51,7 @@
           }
         }
       },
-      "ClosedXML/0.105.0": {
+      "ClosedXML/0.105.1": {
         "dependencies": {
           "ClosedXML.Parser": "2.0.0",
           "DocumentFormat.OpenXml": "3.1.1",
@@ -61,8 +61,8 @@
         },
         "runtime": {
           "lib/netstandard2.1/ClosedXML.dll": {
-            "assemblyVersion": "0.105.0.0",
-            "fileVersion": "0.105.0.0"
+            "assemblyVersion": "0.105.1.0",
+            "fileVersion": "0.105.1.0"
           }
         }
       },
@@ -182,21 +182,24 @@
           }
         }
       },
-      "Microsoft.Bcl.Cryptography/8.0.0": {
+      "Microsoft.Bcl.Cryptography/10.0.2": {
+        "dependencies": {
+          "System.Formats.Asn1": "10.0.2"
+        },
         "runtime": {
           "lib/net8.0/Microsoft.Bcl.Cryptography.dll": {
-            "assemblyVersion": "8.0.0.0",
-            "fileVersion": "8.0.23.53103"
+            "assemblyVersion": "10.0.0.2",
+            "fileVersion": "10.0.225.61305"
           }
         }
       },
-      "Microsoft.Data.SqlClient/7.0.1": {
+      "Microsoft.Data.SqlClient/7.0.2": {
         "dependencies": {
-          "Microsoft.Bcl.Cryptography": "8.0.0",
-          "Microsoft.Data.SqlClient.Extensions.Abstractions": "1.0.0",
-          "Microsoft.Data.SqlClient.Internal.Logging": "1.0.0",
+          "Microsoft.Bcl.Cryptography": "10.0.2",
+          "Microsoft.Data.SqlClient.Extensions.Abstractions": "7.0.2",
+          "Microsoft.Data.SqlClient.Internal.Logging": "7.0.2",
           "Microsoft.Extensions.Caching.Memory": "8.0.1",
-          "Microsoft.IdentityModel.JsonWebTokens": "8.18.0",
+          "Microsoft.IdentityModel.JsonWebTokens": "8.22.0",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.16.0",
           "Microsoft.SqlServer.Server": "1.0.0",
           "System.Configuration.ConfigurationManager": "8.0.1",
@@ -205,7 +208,7 @@
         "runtime": {
           "runtimes/unix/lib/net8.0/Microsoft.Data.SqlClient.dll": {
             "assemblyVersion": "7.0.0.0",
-            "fileVersion": "7.0.1.26114"
+            "fileVersion": "7.0.2.26175"
           }
         },
         "resources": {
@@ -250,22 +253,22 @@
           }
         }
       },
-      "Microsoft.Data.SqlClient.Extensions.Abstractions/1.0.0": {
+      "Microsoft.Data.SqlClient.Extensions.Abstractions/7.0.2": {
         "dependencies": {
-          "Microsoft.Data.SqlClient.Internal.Logging": "1.0.0"
+          "Microsoft.Data.SqlClient.Internal.Logging": "7.0.2"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.Data.SqlClient.Extensions.Abstractions.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.26076"
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.2.26175"
           }
         }
       },
-      "Microsoft.Data.SqlClient.Internal.Logging/1.0.0": {
+      "Microsoft.Data.SqlClient.Internal.Logging/7.0.2": {
         "runtime": {
           "lib/netstandard2.0/Microsoft.Data.SqlClient.Internal.Logging.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.26076"
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.2.26175"
           }
         }
       },
@@ -433,39 +436,39 @@
           }
         }
       },
-      "Microsoft.IdentityModel.Abstractions/8.18.0": {
+      "Microsoft.IdentityModel.Abstractions/8.22.0": {
         "runtime": {
           "lib/net8.0/Microsoft.IdentityModel.Abstractions.dll": {
-            "assemblyVersion": "8.18.0.0",
-            "fileVersion": "8.18.0.26120"
+            "assemblyVersion": "8.22.0.0",
+            "fileVersion": "8.22.0.26208"
           }
         }
       },
-      "Microsoft.IdentityModel.JsonWebTokens/8.18.0": {
+      "Microsoft.IdentityModel.JsonWebTokens/8.22.0": {
         "dependencies": {
-          "Microsoft.IdentityModel.Tokens": "8.18.0"
+          "Microsoft.IdentityModel.Tokens": "8.22.0"
         },
         "runtime": {
           "lib/net8.0/Microsoft.IdentityModel.JsonWebTokens.dll": {
-            "assemblyVersion": "8.18.0.0",
-            "fileVersion": "8.18.0.26120"
+            "assemblyVersion": "8.22.0.0",
+            "fileVersion": "8.22.0.26208"
           }
         }
       },
-      "Microsoft.IdentityModel.Logging/8.18.0": {
+      "Microsoft.IdentityModel.Logging/8.22.0": {
         "dependencies": {
-          "Microsoft.IdentityModel.Abstractions": "8.18.0"
+          "Microsoft.IdentityModel.Abstractions": "8.22.0"
         },
         "runtime": {
           "lib/net8.0/Microsoft.IdentityModel.Logging.dll": {
-            "assemblyVersion": "8.18.0.0",
-            "fileVersion": "8.18.0.26120"
+            "assemblyVersion": "8.22.0.0",
+            "fileVersion": "8.22.0.26208"
           }
         }
       },
       "Microsoft.IdentityModel.Protocols/8.16.0": {
         "dependencies": {
-          "Microsoft.IdentityModel.Tokens": "8.18.0"
+          "Microsoft.IdentityModel.Tokens": "8.22.0"
         },
         "runtime": {
           "lib/net8.0/Microsoft.IdentityModel.Protocols.dll": {
@@ -477,7 +480,7 @@
       "Microsoft.IdentityModel.Protocols.OpenIdConnect/8.16.0": {
         "dependencies": {
           "Microsoft.IdentityModel.Protocols": "8.16.0",
-          "System.IdentityModel.Tokens.Jwt": "8.18.0"
+          "System.IdentityModel.Tokens.Jwt": "8.22.0"
         },
         "runtime": {
           "lib/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {
@@ -486,15 +489,16 @@
           }
         }
       },
-      "Microsoft.IdentityModel.Tokens/8.18.0": {
+      "Microsoft.IdentityModel.Tokens/8.22.0": {
         "dependencies": {
+          "Microsoft.Bcl.Cryptography": "10.0.2",
           "Microsoft.Extensions.Logging.Abstractions": "10.0.0",
-          "Microsoft.IdentityModel.Logging": "8.18.0"
+          "Microsoft.IdentityModel.Logging": "8.22.0"
         },
         "runtime": {
           "lib/net8.0/Microsoft.IdentityModel.Tokens.dll": {
-            "assemblyVersion": "8.18.0.0",
-            "fileVersion": "8.18.0.26120"
+            "assemblyVersion": "8.22.0.0",
+            "fileVersion": "8.22.0.26208"
           }
         }
       },
@@ -541,7 +545,7 @@
           }
         }
       },
-      "MySqlConnector/2.5.0": {
+      "MySqlConnector/2.6.2": {
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "10.0.0"
@@ -549,7 +553,7 @@
         "runtime": {
           "lib/net8.0/MySqlConnector.dll": {
             "assemblyVersion": "2.0.0.0",
-            "fileVersion": "2.5.0.0"
+            "fileVersion": "2.6.2.0"
           }
         }
       },
@@ -595,17 +599,17 @@
           }
         }
       },
-      "Serilog/4.3.1": {
+      "Serilog/4.4.0": {
         "runtime": {
           "lib/net8.0/Serilog.dll": {
-            "assemblyVersion": "4.3.0.0",
-            "fileVersion": "4.3.0.0"
+            "assemblyVersion": "4.4.0.0",
+            "fileVersion": "4.4.0.0"
           }
         }
       },
       "Serilog.AspNetCore/10.0.0": {
         "dependencies": {
-          "Serilog": "4.3.1",
+          "Serilog": "4.4.0",
           "Serilog.Extensions.Hosting": "10.0.0",
           "Serilog.Formatting.Compact": "3.0.0",
           "Serilog.Settings.Configuration": "10.0.0",
@@ -625,7 +629,7 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.0",
           "Microsoft.Extensions.Hosting.Abstractions": "10.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "10.0.0",
-          "Serilog": "4.3.1",
+          "Serilog": "4.4.0",
           "Serilog.Extensions.Logging": "10.0.0"
         },
         "runtime": {
@@ -638,7 +642,7 @@
       "Serilog.Extensions.Logging/10.0.0": {
         "dependencies": {
           "Microsoft.Extensions.Logging": "10.0.0",
-          "Serilog": "4.3.1"
+          "Serilog": "4.4.0"
         },
         "runtime": {
           "lib/net8.0/Serilog.Extensions.Logging.dll": {
@@ -649,7 +653,7 @@
       },
       "Serilog.Formatting.Compact/3.0.0": {
         "dependencies": {
-          "Serilog": "4.3.1"
+          "Serilog": "4.4.0"
         },
         "runtime": {
           "lib/net8.0/Serilog.Formatting.Compact.dll": {
@@ -662,7 +666,7 @@
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "10.0.0",
           "Microsoft.Extensions.DependencyModel": "10.0.0",
-          "Serilog": "4.3.1"
+          "Serilog": "4.4.0"
         },
         "runtime": {
           "lib/net8.0/Serilog.Settings.Configuration.dll": {
@@ -673,7 +677,7 @@
       },
       "Serilog.Sinks.Console/6.1.1": {
         "dependencies": {
-          "Serilog": "4.3.1"
+          "Serilog": "4.4.0"
         },
         "runtime": {
           "lib/net8.0/Serilog.Sinks.Console.dll": {
@@ -684,7 +688,7 @@
       },
       "Serilog.Sinks.Debug/3.0.0": {
         "dependencies": {
-          "Serilog": "4.3.1"
+          "Serilog": "4.4.0"
         },
         "runtime": {
           "lib/net8.0/Serilog.Sinks.Debug.dll": {
@@ -695,7 +699,7 @@
       },
       "Serilog.Sinks.File/7.0.0": {
         "dependencies": {
-          "Serilog": "4.3.1"
+          "Serilog": "4.4.0"
         },
         "runtime": {
           "lib/net8.0/Serilog.Sinks.File.dll": {
@@ -816,15 +820,23 @@
           }
         }
       },
-      "System.IdentityModel.Tokens.Jwt/8.18.0": {
+      "System.Formats.Asn1/10.0.2": {
+        "runtime": {
+          "lib/net8.0/System.Formats.Asn1.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.225.61305"
+          }
+        }
+      },
+      "System.IdentityModel.Tokens.Jwt/8.22.0": {
         "dependencies": {
-          "Microsoft.IdentityModel.JsonWebTokens": "8.18.0",
-          "Microsoft.IdentityModel.Tokens": "8.18.0"
+          "Microsoft.IdentityModel.JsonWebTokens": "8.22.0",
+          "Microsoft.IdentityModel.Tokens": "8.22.0"
         },
         "runtime": {
           "lib/net8.0/System.IdentityModel.Tokens.Jwt.dll": {
-            "assemblyVersion": "8.18.0.0",
-            "fileVersion": "8.18.0.26120"
+            "assemblyVersion": "8.22.0.0",
+            "fileVersion": "8.22.0.26208"
           }
         }
       },
@@ -921,11 +933,11 @@
       "Core.Framework/1.0.0": {
         "dependencies": {
           "BCrypt.Net-Next": "4.1.0",
-          "ClosedXML": "0.105.0",
-          "Microsoft.Data.SqlClient": "7.0.1",
-          "MySqlConnector": "2.5.0",
-          "Serilog": "4.3.1",
-          "System.IdentityModel.Tokens.Jwt": "8.18.0"
+          "ClosedXML": "0.105.1",
+          "Microsoft.Data.SqlClient": "7.0.2",
+          "MySqlConnector": "2.6.2",
+          "Serilog": "4.4.0",
+          "System.IdentityModel.Tokens.Jwt": "8.22.0"
         },
         "runtime": {
           "Core.Framework.dll": {
@@ -956,12 +968,12 @@
       "path": "bouncycastle.cryptography/2.6.2",
       "hashPath": "bouncycastle.cryptography.2.6.2.nupkg.sha512"
     },
-    "ClosedXML/0.105.0": {
+    "ClosedXML/0.105.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-U0hAdnYyPvF7TqHMFloxrS7pmozab79tFFF4c/bgPtqeelUs7ILpUd3r3c7C0a/DXsUZb3k1n4Pf7Q2LMyMQOg==",
-      "path": "closedxml/0.105.0",
-      "hashPath": "closedxml.0.105.0.nupkg.sha512"
+      "sha512": "sha512-X1ruIP9h2FBEK7jmO0peq3s6/Zqt5ve5a9f9kn6WUjdsUWvGbQlqxuGLz822xuFLlmnSeAfWFTGeX/tZlmAt+g==",
+      "path": "closedxml/0.105.1",
+      "hashPath": "closedxml.0.105.1.nupkg.sha512"
     },
     "ClosedXML.Parser/2.0.0": {
       "type": "package",
@@ -1047,33 +1059,33 @@
       "path": "microsoft.aspnetcore.openapi/8.0.25",
       "hashPath": "microsoft.aspnetcore.openapi.8.0.25.nupkg.sha512"
     },
-    "Microsoft.Bcl.Cryptography/8.0.0": {
+    "Microsoft.Bcl.Cryptography/10.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-Y3t/c7C5XHJGFDnohjf1/9SYF3ZOfEU1fkNQuKg/dGf9hN18yrQj2owHITGfNS3+lKJdW6J4vY98jYu57jCO8A==",
-      "path": "microsoft.bcl.cryptography/8.0.0",
-      "hashPath": "microsoft.bcl.cryptography.8.0.0.nupkg.sha512"
+      "sha512": "sha512-LG9Yll3B5aNpxv0+D47g6LiOiKBIlodhcHdQwcYzo8VeexFLGqx5ymetmA2aBRyo9cCcWsQWrFsdbsr8LvmWDw==",
+      "path": "microsoft.bcl.cryptography/10.0.2",
+      "hashPath": "microsoft.bcl.cryptography.10.0.2.nupkg.sha512"
     },
-    "Microsoft.Data.SqlClient/7.0.1": {
+    "Microsoft.Data.SqlClient/7.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-9jZFXAJ2ThNYK7lhj2RhH7klXVNaWSvZpQncq3bPIOjmHBrdjwgeO4c8wucUVxQwFT8rAA13Z2F2jzoYR7ICDw==",
-      "path": "microsoft.data.sqlclient/7.0.1",
-      "hashPath": "microsoft.data.sqlclient.7.0.1.nupkg.sha512"
+      "sha512": "sha512-zwv76lANFQQI6Gmp6ntkzMWIWVqm8Wf4Mz00AeGCk1n8HCi5afi6bNynSe18uI0xeL0n6J+Myjk9AiIsL5oSqw==",
+      "path": "microsoft.data.sqlclient/7.0.2",
+      "hashPath": "microsoft.data.sqlclient.7.0.2.nupkg.sha512"
     },
-    "Microsoft.Data.SqlClient.Extensions.Abstractions/1.0.0": {
+    "Microsoft.Data.SqlClient.Extensions.Abstractions/7.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-rlnxc0KfwDSbE8ZHntFnl8SCgOa9QtJZblMv2zXLhRwl1Je7fsdsVzxSjzzC4JMsfAK+jXJWyezRB8SxUY4BdA==",
-      "path": "microsoft.data.sqlclient.extensions.abstractions/1.0.0",
-      "hashPath": "microsoft.data.sqlclient.extensions.abstractions.1.0.0.nupkg.sha512"
+      "sha512": "sha512-Zx7z61fG2Nc6LdDn4jA7b5Aj1ABrljkOPRE31RvVUdjF6IgbG60leDUhMCafsnWFgaheiK3iqpLe+kbf5Z5L8Q==",
+      "path": "microsoft.data.sqlclient.extensions.abstractions/7.0.2",
+      "hashPath": "microsoft.data.sqlclient.extensions.abstractions.7.0.2.nupkg.sha512"
     },
-    "Microsoft.Data.SqlClient.Internal.Logging/1.0.0": {
+    "Microsoft.Data.SqlClient.Internal.Logging/7.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-Kue/7CF8KNT9zozfr30C94dMZVZml3atqWZvQemSXvTau76tRdypzeKiBKXadqgbOME0UiQIyVTNo5WxCRNVNg==",
-      "path": "microsoft.data.sqlclient.internal.logging/1.0.0",
-      "hashPath": "microsoft.data.sqlclient.internal.logging.1.0.0.nupkg.sha512"
+      "sha512": "sha512-iqgYBbGSVy/DIYWjzmQOa964Kn4rs4wW5vg2IamqVK0fQqfTiILVR5hMK27XWqoyONtAZs+VxH354cPJBtSnbg==",
+      "path": "microsoft.data.sqlclient.internal.logging/7.0.2",
+      "hashPath": "microsoft.data.sqlclient.internal.logging.7.0.2.nupkg.sha512"
     },
     "Microsoft.Extensions.Caching.Memory/8.0.1": {
       "type": "package",
@@ -1173,26 +1185,26 @@
       "path": "microsoft.extensions.primitives/10.0.0",
       "hashPath": "microsoft.extensions.primitives.10.0.0.nupkg.sha512"
     },
-    "Microsoft.IdentityModel.Abstractions/8.18.0": {
+    "Microsoft.IdentityModel.Abstractions/8.22.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-8VUcDy66uw1GUC/ytyRJAUgGxydPu2rLtUbUAiniCHd5SMB/01Q28XgqFyxIqb3srz6HWTgSsZdDbkdVJr3LXQ==",
-      "path": "microsoft.identitymodel.abstractions/8.18.0",
-      "hashPath": "microsoft.identitymodel.abstractions.8.18.0.nupkg.sha512"
+      "sha512": "sha512-LU3V3owsu4vGpCg2kyL7SsQEuHwcoJ8FSNBqzLADzCf3/PcKUTcx5Plsd51DoTJMfK/WigXV/03UhaN5JXE6uQ==",
+      "path": "microsoft.identitymodel.abstractions/8.22.0",
+      "hashPath": "microsoft.identitymodel.abstractions.8.22.0.nupkg.sha512"
     },
-    "Microsoft.IdentityModel.JsonWebTokens/8.18.0": {
+    "Microsoft.IdentityModel.JsonWebTokens/8.22.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-ZUMJt3r1zOi67AVSfnh3u9hg9KCq06roOIX5gs7FqsucSZ/VTsI89DI9h2gHyU0xOtj/qVZV2ugWS6JlLMTwHQ==",
-      "path": "microsoft.identitymodel.jsonwebtokens/8.18.0",
-      "hashPath": "microsoft.identitymodel.jsonwebtokens.8.18.0.nupkg.sha512"
+      "sha512": "sha512-kv6peMLjALZLDAy2H3F77KjVRdwiscn2p/g3ui2chcbuEcAX2MpAbyDcYnJ7Vyh8jZ1aJWrniUMCDWoOgnu4NQ==",
+      "path": "microsoft.identitymodel.jsonwebtokens/8.22.0",
+      "hashPath": "microsoft.identitymodel.jsonwebtokens.8.22.0.nupkg.sha512"
     },
-    "Microsoft.IdentityModel.Logging/8.18.0": {
+    "Microsoft.IdentityModel.Logging/8.22.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-c2l/VEtW1XI/ifcu49xzDwgrZZ0a0aX/TwCPC7mEHFQk/KixDgtSdjB5eDhYyCO38GJiRUjeRTz9aWCy1t55ww==",
-      "path": "microsoft.identitymodel.logging/8.18.0",
-      "hashPath": "microsoft.identitymodel.logging.8.18.0.nupkg.sha512"
+      "sha512": "sha512-G9Tl0yXSlr2pkXv4EpXjO16M4q6oo9N/od+gNyOusZ8yM8LZg1H3f/QOMFuOJiV6znzY5MkAREU97JRRnqpEQw==",
+      "path": "microsoft.identitymodel.logging/8.22.0",
+      "hashPath": "microsoft.identitymodel.logging.8.22.0.nupkg.sha512"
     },
     "Microsoft.IdentityModel.Protocols/8.16.0": {
       "type": "package",
@@ -1208,12 +1220,12 @@
       "path": "microsoft.identitymodel.protocols.openidconnect/8.16.0",
       "hashPath": "microsoft.identitymodel.protocols.openidconnect.8.16.0.nupkg.sha512"
     },
-    "Microsoft.IdentityModel.Tokens/8.18.0": {
+    "Microsoft.IdentityModel.Tokens/8.22.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-c6ksXXFj5oPPsl8pfsui5zv8Gs7uxrGetXCTc1p7k7Nue/C8iBMtAVgtRrH7Esqe596QWD7KS3exKYY1FJG2iw==",
-      "path": "microsoft.identitymodel.tokens/8.18.0",
-      "hashPath": "microsoft.identitymodel.tokens.8.18.0.nupkg.sha512"
+      "sha512": "sha512-i4lywKKUuVmheCUA+w/q8QNPReNI0qanHI9hhz48AFqD1ljyb8sxPL2RbXOGiPV13XdJ4kxieL9ukS7tD43LxA==",
+      "path": "microsoft.identitymodel.tokens/8.22.0",
+      "hashPath": "microsoft.identitymodel.tokens.8.22.0.nupkg.sha512"
     },
     "Microsoft.OpenApi/1.4.3": {
       "type": "package",
@@ -1243,12 +1255,12 @@
       "path": "mysqlbackup.net/2.7.1",
       "hashPath": "mysqlbackup.net.2.7.1.nupkg.sha512"
     },
-    "MySqlConnector/2.5.0": {
+    "MySqlConnector/2.6.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-hoAwfHHF8DlRRqwHOhN3u1KLi+XbX/4LPS7Anfa+SYC97vRyIfdEOEEfj1L50q01Ik8aDNvmDrNmu/VPFiAiaQ==",
-      "path": "mysqlconnector/2.5.0",
-      "hashPath": "mysqlconnector.2.5.0.nupkg.sha512"
+      "sha512": "sha512-dlTc/tsBa42szdvpj4nrHvQVUb0gsMwR9HT6J0Zz2OSqfP0CdYlGw+qQPqCpbnO97idfvclSjKYtM6y5QaBQaQ==",
+      "path": "mysqlconnector/2.6.2",
+      "hashPath": "mysqlconnector.2.6.2.nupkg.sha512"
     },
     "PdfSharpCore/1.3.67": {
       "type": "package",
@@ -1271,12 +1283,12 @@
       "path": "rbush.signed/4.0.0",
       "hashPath": "rbush.signed.4.0.0.nupkg.sha512"
     },
-    "Serilog/4.3.1": {
+    "Serilog/4.4.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-savYe7h5yRlkqBVOwP8cIRDOdqKiPmYCU4W87JH38sBmcKD5EBoXvQIw6bNEvZ/pTe1gsiye3VFCzBsoppGkXQ==",
-      "path": "serilog/4.3.1",
-      "hashPath": "serilog.4.3.1.nupkg.sha512"
+      "sha512": "sha512-ZC6Le3rr4TVJJjS4KsQAesxeF1EhW9qcZmmG7eP5Y2G3+gTGkJEUXkq4+tZNPtyp05I0wWOxnIjwtxFweJsObw==",
+      "path": "serilog/4.4.0",
+      "hashPath": "serilog.4.4.0.nupkg.sha512"
     },
     "Serilog.AspNetCore/10.0.0": {
       "type": "package",
@@ -1425,12 +1437,19 @@
       "path": "system.diagnostics.eventlog/8.0.1",
       "hashPath": "system.diagnostics.eventlog.8.0.1.nupkg.sha512"
     },
-    "System.IdentityModel.Tokens.Jwt/8.18.0": {
+    "System.Formats.Asn1/10.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-JxKlBca3/eXeH4koAGjEXOwrBdtwyDXwHXdYT5TQunp64TcVBl4wBCfmlGwhSG017Q/Qrz24leLxV6v2eknnJg==",
-      "path": "system.identitymodel.tokens.jwt/8.18.0",
-      "hashPath": "system.identitymodel.tokens.jwt.8.18.0.nupkg.sha512"
+      "sha512": "sha512-9Hee6iQ74pDgdRNIL6lO8Vlx2onVWd5aDnqwk4Pvo0h5FklBd7QwcQDKgxeLuhiy0o3ibzUVO0KFQe0/hPXU+Q==",
+      "path": "system.formats.asn1/10.0.2",
+      "hashPath": "system.formats.asn1.10.0.2.nupkg.sha512"
+    },
+    "System.IdentityModel.Tokens.Jwt/8.22.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-CpXGfNhLl6EgYaOC9XYsc1p7Ci9HtAy0soHJDSBNGse647al4tTq9RDr+LQsrF4Ls79Dx7VfzN34km0W4DWPow==",
+      "path": "system.identitymodel.tokens.jwt/8.22.0",
+      "hashPath": "system.identitymodel.tokens.jwt.8.22.0.nupkg.sha512"
     },
     "System.IO.Packaging/8.0.1": {
       "type": "package",
