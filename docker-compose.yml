@@ -3,7 +3,7 @@ services:
     image: mysql:8.0
     container_name: inventory-mysql      
     restart: always
-    command: --lower_case_table_names=1
+    command: --lower_case_table_names=1 --max_allowed_packet=1G
     environment:
       - TZ=Asia/Jakarta
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
@@ -14,32 +14,39 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
       - ./mysql_data:/var/lib/mysql
-      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${DB_ROOT_PASSWORD} || exit 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
   inventory-flyway:
     image: flyway/flyway:latest
     container_name: inventory-flyway
-    # Menghubungkan Flyway ke database dengan retries jika DB belum siap
-    command: -url=jdbc:mysql://inventory-db:3306/${DB_NAME} -user=root -password=${DB_ROOT_PASSWORD} -connectRetries=60 migrate
+    # Param allowPublicKeyRetrieval=true & useSSL=false untuk mentolerir autentikasi MySQL 8.0
+    command: -url="jdbc:mysql://inventory-db:3306/${DB_NAME}?allowPublicKeyRetrieval=true&useSSL=false" -user=root -password=${DB_ROOT_PASSWORD} -baselineOnMigrate=true migrate
     volumes:
       - ./init-db:/flyway/sql
     depends_on:
-      - inventory-db
+      inventory-db:
+        condition: service_healthy
 
   inventory-api:
     build: ./inventory_api
     container_name: inventory-api
     restart: always
     depends_on:
-      - inventory-db
+      inventory-flyway:
+        condition: service_completed_successfully
     ports:
       - "${API_PORT}:${API_PORT}"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:${API_PORT}
-      # AllowUserVariables=True penting untuk Stored Procedure dengan Window Functions
-      - ConnectionStrings__DefaultConnection=Server=inventory-db;Database=${DB_NAME};Uid=root;Pwd=${DB_ROOT_PASSWORD};AllowUserVariables=True
-
+      # ?? MENGGUNAKAN 0.0.0.0 AGAR KESTREL MENERIMA PANGGILAN DARI 127.0.0.1 MAUPUN LOCALHOST
+      - ASPNETCORE_URLS=http://0.0.0.0:${API_PORT}
+      - ConnectionStrings__DefaultConnection=Server=inventory-db;Database=${DB_NAME};Uid=root;Pwd=${DB_ROOT_PASSWORD};AllowUserVariables=True;SslMode=Disabled;
+      
   inventory-web:
     build: ./inventory_web
     container_name: inventory-web
