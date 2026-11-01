@@ -115690,7 +115690,7 @@ s=this.c.bg(o.d)
 s=p.O2("Tanggal",s)
 o=o.f
 r=t.n_
-o=A.r7(A.b([A.pY(A.b([n,s,p.O2("Kepada Yth.",o==null?"-":o)],r),B.ey),A.pY(A.b([A.dP("   ",A.hT(q,B.cL,q,q,q,q,q,q,q,B.bq,q,q,12,q,B.bN,q,!0,q,q,q,q),q,q),A.dP("Jl. Petemon V No. 51 Surabaya, WA 0812 3423 5219",B.Rd,q,q),new A.dW(q,4,q),A.dP("SURAT JALAN",A.hT(q,B.cL,q,q,q,q,q,q,q,B.bq,q,q,16,q,B.bN,q,!0,q,q,q,q),q,q)],r),B.Yl)],r),B.ey,B.iu)
+o=A.r7(A.b([A.pY(A.b([n,s,p.O2("Kepada Yth.",o==null?"-":o)],r),B.ey),A.pY(A.b([A.dP("   ",A.hT(q,B.cL,q,q,q,q,q,q,q,B.bq,q,q,12,q,B.bN,q,!0,q,q,q,q),q,q),A.dP("   ",B.Rd,q,q),new A.dW(q,4,q),A.dP("SURAT JALAN",A.hT(q,B.cL,q,q,q,q,q,q,q,B.bq,q,q,16,q,B.bN,q,!0,q,q,q,q),q,q)],r),B.Yl)],r),B.ey,B.iu)
 s=A.dP("Kami kirimkan barang-barang tersebut dibawah ini dengan kendaraan.............................. No. ..............................",B.Rd,q,q)
 n=A.a6([0,B.zo,1,B.zp],t.S,t.OW)
 return A.pY(A.b([o,new A.dW(q,4,q),s,new A.dW(q,8,q),A.bbW(B.b_2,A.b([new A.pl(A.b([p.a0Z("BANYAKNYA"),p.a0Z("NAMA BARANG")],r),!1,q)],t.pH),n,B.q1,B.QS,B.oX)],r),B.ey)},
