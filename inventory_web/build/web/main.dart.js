@@ -115690,7 +115690,7 @@ s=this.c.bg(o.d)
 s=p.O2("Tanggal",s)
 o=o.f
 r=t.n_
-o=A.r7(A.b([A.pY(A.b([n,s,p.O2("Kepada Yth.",o==null?"-":o)],r),B.ey),A.pY(A.b([A.dP("   ",A.hT(q,B.cL,q,q,q,q,q,q,q,B.bq,q,q,12,q,B.bN,q,!0,q,q,q,q),q,q),A.dP("   ",B.Rd,q,q),new A.dW(q,4,q),A.dP("SURAT JALAN",A.hT(q,B.cL,q,q,q,q,q,q,q,B.bq,q,q,16,q,B.bN,q,!0,q,q,q,q),q,q)],r),B.Yl)],r),B.ey,B.iu)
+o=A.r7(A.b([A.pY(A.b([n,s,p.O2("Kepada Yth.",o==null?"-":o)],r),B.ey),A.pY(A.b([A.dP("BSJ",A.hT(q,B.cL,q,q,q,q,q,q,q,B.bq,q,q,12,q,B.bN,q,!0,q,q,q,q),q,q),A.dP("   ",B.Rd,q,q),new A.dW(q,4,q),A.dP("SURAT JALAN",A.hT(q,B.cL,q,q,q,q,q,q,q,B.bq,q,q,16,q,B.bN,q,!0,q,q,q,q),q,q)],r),B.Yl)],r),B.ey,B.iu)
 s=A.dP("Kami kirimkan barang-barang tersebut dibawah ini dengan kendaraan.............................. No. ..............................",B.Rd,q,q)
 n=A.a6([0,B.zo,1,B.zp],t.S,t.OW)
 return A.pY(A.b([o,new A.dW(q,4,q),s,new A.dW(q,8,q),A.bbW(B.b_2,A.b([new A.pl(A.b([p.a0Z("BANYAKNYA"),p.a0Z("NAMA BARANG")],r),!1,q)],t.pH),n,B.q1,B.QS,B.oX)],r),B.ey)},
@@ -116403,7 +116403,7 @@ i=B.p.ad(a3.hO(q),1)
 a2.push(new A.qU((p-o)*b,g,g,(n-m)*b,A.jk(B.pQ,A.dP(j+"x"+A.dZ(i,".0",""),A.hT(g,B.oq,g,g,g,g,g,g,g,B.bq,g,g,6,g,g,g,!0,g,g,g,g),g,g),g,new A.A7(B.aUN,new A.t5(k,k,k,k),g,B.fZ),q*b,g,g,l*b)))}s=a3.ax
 a2.push(new A.qU(0,420-a,g,a0+4,A.al6(A.dP("W: "+a3.jw(a3.hO(f))+" "+s.gj(0).toUpperCase(),A.hT(g,B.LH,g,g,g,g,g,g,g,B.bq,g,g,9,g,B.bN,g,!0,g,g,g,g),g,g))))
 a2.push(new A.qU(a+6,g,300-a0,0,A.jk(B.SR,A.dP("H: "+a3.jw(a3.hO(d))+" "+s.gj(0).toUpperCase(),A.hT(g,B.LH,g,g,g,g,g,g,g,B.bq,g,g,9,g,B.bN,g,!0,g,g,g,g),g,g),g,g,g,g,g,g)))
-s=A.b([A.dP("    - PANDUAN POTONG KERTAS",A.hT(g,g,g,g,g,g,g,g,g,B.bq,g,g,14,g,B.bN,g,!0,g,g,g,g),g,g),new A.dW(g,5,g),A.dP("Hasil: "+a3.dy.gj(0)+" Lembar ("+h.d+") | Plano: "+a3.jw(a3.hO(f))+"x"+a3.jw(a3.hO(d))+" "+s.gj(0)+" | Target: "+a3.jw(a3.hO(h.e))+"x"+a3.jw(a3.hO(h.f))+" "+s.gj(0),B.Rb,g,g)],a1)
+s=A.b([A.dP("BSJ - PANDUAN POTONG KERTAS",A.hT(g,g,g,g,g,g,g,g,g,B.bq,g,g,14,g,B.bN,g,!0,g,g,g,g),g,g),new A.dW(g,5,g),A.dP("Hasil: "+a3.dy.gj(0)+" Lembar ("+h.d+") | Plano: "+a3.jw(a3.hO(f))+"x"+a3.jw(a3.hO(d))+" "+s.gj(0)+" | Target: "+a3.jw(a3.hO(h.e))+"x"+a3.jw(a3.hO(h.f))+" "+s.gj(0),B.Rb,g,g)],a1)
 f=a3.dx
 if(f.gj(0)>0)B.l.J(s,A.b([new A.dW(g,2,g),A.dP("Target Produksi: "+f.gj(0)+" Lembar | Dibutuhkan: "+a3.fr.gj(0)+" Lembar Plano Utama",A.hT(g,B.aUM,g,g,g,g,g,g,g,B.bq,g,g,10,g,B.bN,g,!0,g,g,g,g),g,g)],a1))
 s.push(A.bgi(g,1))
@@ -120931,7 +120931,7 @@ $S:0}
 A.BL.prototype={
 H(a){var s,r,q,p,o,n,m,l,k=this,j=null,i=A.P(a),h=A.a_(24),g=A.b([new A.bX(0,B.aw,B.R.cE(0.04),B.iC,24)],t.V),f=i.dx,e=f.cE(0.08)
 e=A.cz(A.aZ(j,A.d5(B.a5G,f,j,40),B.M,j,j,new A.b4(e,j,j,j,j,j,j,B.cv),j,j,j,j,B.cq,j,j,j),j,j)
-s=A.Q("   ",j,j,j,j,B.b2N,B.cP,j,j)
+s=A.Q("BSJ",j,j,j,j,B.b2N,B.cP,j,j)
 r=A.Q("Username",j,j,j,j,A.ba(j,j,B.d9,j,j,j,j,j,j,j,j,13,j,j,B.dU,j,j,!0,j,j,j,j,j,j,j,j),j,j,j)
 q=$.c
 if(q==null)q=$.c=B.o
@@ -122626,7 +122626,7 @@ A.nn($.ak(),"/history-penjualan",s,t.z)
 return null},
 $S:314}
 A.amI.prototype={
-$1(a){A.b94("   ","Apakah Anda yakin ingin menghapus "+A.l(a.b)+"?","BATAL",new A.amD(this.a,a),"HAPUS",B.a3)},
+$1(a){A.b94("BSJ","Apakah Anda yakin ingin menghapus "+A.l(a.b)+"?","BATAL",new A.amD(this.a,a),"HAPUS",B.a3)},
 $S:162}
 A.amD.prototype={
 $0(){A.ei($.ak(),null)
@@ -123276,7 +123276,7 @@ $0(){var s,r,q,p,o=null,n=this.a,m=$.c
 if(m==null)m=$.c=B.o
 s=A.i(n).h("I.T")
 if(m.q(0,o,s).p2.gj(0))m=70
-else{r=A.rm(o,o,1,o,A.ek(o,o,o,o,o,o,o,o,o,n.f,"   "),B.ap,B.aY,o,B.fl,B.be)
+else{r=A.rm(o,o,1,o,A.ek(o,o,o,o,o,o,o,o,o,n.f,"BSJ"),B.ap,B.aY,o,B.fl,B.be)
 r.r9()
 m=r.b.c+15+70}q=$.c
 q=(q==null?$.c=B.o:q).q(0,o,s)
@@ -123331,7 +123331,7 @@ return s},
 $S:0}
 A.aBU.prototype={
 $0(){var s=null,r=this.b.p2.gj(0),q=A.b([],t.p)
-if(!r)q.push(new A.fE(1,B.cr,A.Gi(new A.at(B.yQ,A.Q("   ",s,B.cC,s,!1,this.a.f,s,s,s),s),B.al,B.ar,1),s))
+if(!r)q.push(new A.fE(1,B.cr,A.Gi(new A.at(B.yQ,A.Q("BSJ",s,B.cC,s,!1,this.a.f,s,s,s),s),B.al,B.ar,1),s))
 return A.aZ(B.aq,A.ap(q,B.H,B.by,B.I,0,s),B.M,s,s,s,s,s,s,s,B.bI,s,s,s)},
 $S:111}
 A.aBW.prototype={
@@ -126619,7 +126619,7 @@ s.a.a4a(s.d,!0)},
 $S:0}
 A.aQP.prototype={
 $0(){var s=this.a
-A.b94("   ","Apakah Anda yakin ingin menghapus "+A.l(s.b)+"?","BATAL",new A.aQN(this.b,s),"HAPUS",B.a3)},
+A.b94("BSJ","Apakah Anda yakin ingin menghapus "+A.l(s.b)+"?","BATAL",new A.aQN(this.b,s),"HAPUS",B.a3)},
 $S:0}
 A.aQN.prototype={
 $0(){A.ei($.ak(),null)
